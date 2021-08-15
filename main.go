@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 
 	"github.com/GaudiestTooth17/irn-sim/sim"
-	"gonum.org/v1/gonum/stat/distuv"
 )
 
 func main() {
@@ -16,11 +16,12 @@ func main() {
 	networkPath := os.Args[1]
 
 	// set up the parameters
-	rng := distuv.UnitUniform
+	rng := rand.New(rand.NewSource(0))
 	net := readFile(networkPath)
-	disease := sim.Disease{4, .2}
+	disease := sim.Disease{DaysInfectious: 4, TransProb: .2}
 	behavior := sim.NewSimplePressureBehavior(net, rng, 2, .25)
-	sir0 := sim.MakeSir0(1, rng)
+	sir0 := sim.MakeSir0(net.N(), 1, rng)
 	// run a simulation
-	result := sim.Simulate(net.M(), sir)
+	result := sim.Simulate(net.M(), sir0, disease, behavior, 300, rng)
+	fmt.Println(sim.GetSurvivalPercentage(result))
 }

@@ -1,11 +1,39 @@
 package sim
 
-import "github.com/GaudiestTooth17/irn-sim/sets"
+import (
+	"math/rand"
+
+	"github.com/GaudiestTooth17/irn-sim/sets"
+)
 
 type SIR struct {
 	S []int
 	I []int
 	R []int
+}
+
+// Make the initial SIR for a simulation with N agent
+func MakeSir0(N int, numToInfect int, rng *rand.Rand) SIR {
+	s := make([]int, N)
+	i := make([]int, N)
+	r := make([]int, N)
+
+	// randomly choose the states
+	infectious := make(map[int]bool, numToInfect)
+	for len(infectious) < numToInfect {
+		infectious[rand.Intn(numToInfect)] = true
+	}
+
+	// update arrays to reflect what state each agent is in
+	for agent := 0; agent < N; agent++ {
+		if infectious[agent] {
+			i[agent] = 1
+		} else {
+			s[agent] = 1
+		}
+	}
+
+	return SIR{s, i, r}
 }
 
 func (sir SIR) NumRemoved() int {

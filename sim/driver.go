@@ -1,8 +1,9 @@
 package sim
 
 import (
+	"math/rand"
+
 	"gonum.org/v1/gonum/mat"
-	"gonum.org/v1/gonum/stat/distuv"
 )
 
 func Simulate(M *mat.Dense,
@@ -10,7 +11,7 @@ func Simulate(M *mat.Dense,
 	disease Disease,
 	behavior Behavior,
 	maxSteps int,
-	rng distuv.Rander) []SIR {
+	rng *rand.Rand) []SIR {
 
 	sirs := make([]SIR, maxSteps)
 	sirs[0] = sir0.Copy()
@@ -44,7 +45,14 @@ func Simulate(M *mat.Dense,
 	return sirs
 }
 
-func nextSIR(oldSIR SIR, M *mat.Dense, disease Disease, rng distuv.Rander) (SIR, bool) {
+func GetSurvivalPercentage(sirs []SIR) float64 {
+	lastSIR := sirs[len(sirs)-1]
+	N := len(lastSIR.S)
+	numS := len(lastSIR.SusceptibleAgents())
+	return float64(numS) / float64(N)
+}
+
+func nextSIR(oldSIR SIR, M *mat.Dense, disease Disease, rng *rand.Rand) (SIR, bool) {
 	sir := oldSIR.Copy()
 
 	// infectious to recovered
@@ -107,7 +115,7 @@ func colProd(m *mat.Dense) []float64 {
 	for i := range matrixSlice {
 		matrixSlice[i] = m.RawRowView(i)
 	}
-	var prod []float64
+	prod := make([]float64, len(matrixSlice[0]))
 	copy(prod, matrixSlice[0])
 	for _, row := range matrixSlice[1:] {
 		for i, v := range row {
@@ -117,11 +125,11 @@ func colProd(m *mat.Dense) []float64 {
 	return prod
 }
 
-func makeToIFilter(sir SIR, toIProbs []float64, rng distuv.Rander) []int {
+func makeToIFilter(sir SIR, toIProbs []float64, rng *rand.Rand) []int {
 	susceptibleAgents := sir.SusceptibleAgents()
 	toIFilter := make([]int, 0)
 	for agent := range susceptibleAgents {
-		if rng.Rand() < toIProbs[agent] {
+		if rng.Float64() < toIProbs[agent] {
 			toIFilter = append(toIFilter, agent)
 		}
 	}

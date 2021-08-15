@@ -3,10 +3,11 @@ package sim
 import (
 	"fmt"
 
+	"math/rand"
+
 	"github.com/GaudiestTooth17/irn-sim/network"
 	"github.com/GaudiestTooth17/irn-sim/sets"
 	"gonum.org/v1/gonum/mat"
-	"gonum.org/v1/gonum/stat/distuv"
 )
 
 type Behavior interface {
@@ -19,11 +20,11 @@ type SimplePressureBehavior struct {
 	net                *network.AdjacencyList
 	pressure           []float64
 	flickerProbability float64
-	rng                distuv.Rander
+	rng                *rand.Rand
 }
 
 func NewSimplePressureBehavior(net *network.AdjacencyList,
-	rng distuv.Rander,
+	rng *rand.Rand,
 	radius int,
 	flickerProbability float64) SimplePressureBehavior {
 
@@ -76,7 +77,7 @@ func (b SimplePressureBehavior) UpdateConnections(D *mat.Dense, M *mat.Dense, ti
 	// to determine if they will flicker
 	flickeringAgents := sets.EmptyIntSet()
 	for agent, pressureValue := range b.pressure {
-		if pressureValue > 0 && b.rng.Rand() < b.flickerProbability {
+		if pressureValue > 0 && b.rng.Float64() < b.flickerProbability {
 			flickeringAgents.Add(agent)
 		}
 	}

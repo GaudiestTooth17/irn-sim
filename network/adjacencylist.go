@@ -14,7 +14,7 @@ type AdjacencyList struct {
 	// node ID to the node's neighbors
 	adjList map[int64][]graph.Node
 	// adjacency matrix
-	m *mat.SymDense
+	m *mat.Dense
 	// distance matrix
 	dm *mat.Dense
 }
@@ -81,7 +81,7 @@ func (g *AdjacencyList) EdgeBetween(xid, yid int64) graph.Edge {
 }
 
 // Return the adjacency matrix
-func (n *AdjacencyList) M() *mat.SymDense {
+func (n *AdjacencyList) M() *mat.Dense {
 	if n.m == nil {
 		N := int64(n.N())
 		backingData := make([]float64, N*N)
@@ -93,7 +93,7 @@ func (n *AdjacencyList) M() *mat.SymDense {
 				backingData[v.ID()*N+uID] = 1
 			}
 		}
-		n.m = mat.NewSymDense(int(N), backingData)
+		n.m = mat.NewDense(int(N), int(N), backingData)
 	}
 	return n.m
 }
