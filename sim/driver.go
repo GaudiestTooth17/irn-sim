@@ -84,8 +84,7 @@ func calculateToIProbs(M *mat.Dense, disease Disease, iFilter []int) []float64 {
 	// (M * disease.trans_prob)[i_filter]
 	probOfNoTransMatrix = newMatrixFromRows(probOfNoTransMatrix, iFilter)
 	// 1 - (M * disease.trans_prob)[i_filter]
-	probOfNoTransMatrix.Apply(func(i, j int, v float64) float64 { return 1 - v },
-		probOfNoTransMatrix)
+	applyInPlace(probOfNoTransMatrix, func(i, j int, v float64) float64 { return 1 - v })
 	// np.prod(1 - (M * disease.trans_prob)[i_filter], axis=0)
 	nodeToTransProb := colProd(probOfNoTransMatrix)
 	// 1 - np.prod(1 - (M * disease.trans_prob)[i_filter], axis=0)
@@ -134,4 +133,13 @@ func makeToIFilter(sir SIR, toIProbs []float64, rng *rand.Rand) []int {
 		}
 	}
 	return toIFilter
+}
+
+func applyInPlace(matrix *mat.Dense, function func(i, j int, val float64) float64) {
+	r, c := matrix.Dims()
+	for i := 0; i < r; i++ {
+		for j := 0; j < c; j++ {
+			matrix.Set(i, j, function(i, j, matrix.At(i, j)))
+		}
+	}
 }

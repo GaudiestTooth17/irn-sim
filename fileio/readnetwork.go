@@ -1,4 +1,4 @@
-package main
+package fileio
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 )
 
 // Read a file in GraphML
-func readFile(filename string) *network.AdjacencyList {
+func ReadFile(filename string) *network.AdjacencyList {
 	fileContents, err := ioutil.ReadFile(filename)
 	if err != nil {
 		panic(err)

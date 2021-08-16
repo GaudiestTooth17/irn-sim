@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 
+	fio "github.com/GaudiestTooth17/irn-sim/fileio"
 	"github.com/GaudiestTooth17/irn-sim/sim"
 )
 
@@ -17,7 +18,7 @@ func main() {
 
 	// set up the parameters
 	rng := rand.New(rand.NewSource(0))
-	net := readFile(networkPath)
+	net := fio.ReadFile(networkPath)
 	disease := sim.Disease{DaysInfectious: 4, TransProb: .2}
 	behavior := sim.NewSimplePressureBehavior(net, rng, 2, .25)
 	sir0 := sim.MakeSir0(net.N(), 1, rng)

@@ -84,11 +84,11 @@ func (b SimplePressureBehavior) UpdateConnections(D *mat.Dense, M *mat.Dense, ti
 
 	R := mat.DenseCopyOf(M)
 	// turn off the edges connected to a flickering agent
-	R.Apply(func(i, j int, v float64) float64 {
-		if flickeringAgents.Contains(i) || flickeringAgents.Contains(j) {
-			return 0
+	for agent0 := range flickeringAgents {
+		for agent1 := range flickeringAgents {
+			R.Set(agent0, agent1, 0)
+			R.Set(agent1, agent0, 0)
 		}
-		return v
-	}, R)
+	}
 	return R
 }
