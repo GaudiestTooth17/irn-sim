@@ -29,7 +29,7 @@ func Simulate(M *mat.Dense,
 
 		// find all the agents that are in the removed state. If that number is N,
 		// then the simulation is done.
-		if !statesChanged && sirs[step].NumRemoved() == N {
+		if !statesChanged || sirs[step].NumRemoved() == N {
 			return sirs[:step]
 		}
 
@@ -73,9 +73,13 @@ func nextSIR(oldSIR SIR, M *mat.Dense, disease Disease, rng *rand.Rand) (SIR, bo
 	return sir, len(toRFilter) > 0 || len(toIFilter) > 0
 }
 
-// corresponds to o_i_probs = 1 - np.prod(1 - (M * disease.trans_prob)[i_filter], axis=0)
+// corresponds to to_i_probs = 1 - np.prod(1 - (M * disease.trans_prob)[i_filter], axis=0)
 func calculateToIProbs(M *mat.Dense, disease Disease, iFilter []int) []float64 {
 	N, _ := M.Dims()
+	// I'm pretty sure this if statement wouldn't be necessary if the early exit logic worked
+	if len(iFilter) == 0 {
+		return make([]float64, N)
+	}
 	probOfNoTransMatrix := mat.NewDense(N, N, nil)
 	// (M * disease.trans_prob)
 	probOfNoTransMatrix.Apply(func(i, j int, v float64) float64 {

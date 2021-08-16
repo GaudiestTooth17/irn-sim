@@ -49,16 +49,16 @@ func (sir SIR) NumRemoved() int {
 func (sir SIR) InfectiousLongerThan(time int) []int {
 	nodesInfectiousForLongTime := make([]int, 0)
 	for node, timeInState := range sir.I {
-		if timeInState < time {
+		if timeInState > time {
 			nodesInfectiousForLongTime = append(nodesInfectiousForLongTime, node)
 		}
 	}
 	return nodesInfectiousForLongTime
 }
 
-func (sir SIR) RecoveredAgents() sets.IntSet {
+func (sir SIR) RemovedAgents() sets.IntSet {
 	theRecovered := sets.EmptyIntSet()
-	for timeInState, agent := range sir.R {
+	for agent, timeInState := range sir.R {
 		if timeInState > 0 {
 			theRecovered.Add(agent)
 		}
@@ -68,7 +68,7 @@ func (sir SIR) RecoveredAgents() sets.IntSet {
 
 func (sir SIR) InfectiousAgents() sets.IntSet {
 	theInfectious := sets.EmptyIntSet()
-	for timeInState, agent := range sir.I {
+	for agent, timeInState := range sir.I {
 		if timeInState > 0 {
 			theInfectious.Add(agent)
 		}
@@ -78,7 +78,7 @@ func (sir SIR) InfectiousAgents() sets.IntSet {
 
 func (sir SIR) SusceptibleAgents() sets.IntSet {
 	theSusceptible := sets.EmptyIntSet()
-	for timeInState, agent := range sir.S {
+	for agent, timeInState := range sir.S {
 		if timeInState > 0 {
 			theSusceptible.Add(agent)
 		}
@@ -133,12 +133,13 @@ func (sir SIR) setNegativeTimesTo1() {
 }
 
 func (sir SIR) DiseaseGone() bool {
-	for _, timeInState := range sir.I {
-		if timeInState > 0 {
-			return false
-		}
-	}
-	return true
+	// for _, timeInState := range sir.I {
+	// 	if timeInState > 0 {
+	// 		return false
+	// 	}
+	// }
+	// return true
+	return len(sir.InfectiousAgents()) > 0
 }
 
 func (sir SIR) Copy() SIR {

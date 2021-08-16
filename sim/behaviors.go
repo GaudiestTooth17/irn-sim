@@ -58,7 +58,7 @@ func (b SimplePressureBehavior) UpdateConnections(D *mat.Dense, M *mat.Dense, ti
 		}
 	}
 
-	recoveredAgents := sir.RecoveredAgents()
+	recoveredAgents := sir.RemovedAgents()
 	if len(recoveredAgents) > 0 {
 		// populate unpressuredAgents by finding all the agents in pressure range
 		// of the recovered agents

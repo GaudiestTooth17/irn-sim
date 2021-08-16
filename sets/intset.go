@@ -1,5 +1,7 @@
 package sets
 
+import "fmt"
+
 type void struct{}
 type IntSet map[int]void
 
@@ -65,4 +67,17 @@ func (s IntSet) Filter(keep func(v int) bool) IntSet {
 		}
 	}
 	return filteredSet
+}
+
+func (s IntSet) String() string {
+	if len(s) == 0 {
+		return "{}"
+	}
+	values := s.Values()
+	str := fmt.Sprintf("{%v", values[0])
+	for _, v := range values[1:] {
+		str = fmt.Sprintf("%s, %v", str, v)
+	}
+	str = fmt.Sprintf("%s}", str)
+	return str
 }
