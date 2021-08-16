@@ -10,9 +10,9 @@ import (
 
 func TestSimulation(t *testing.T) {
 	rng := rand.New(rand.NewSource(1))
-	net := fio.ReadFile("../networks/elitist-500.txt")
+	net := fio.ReadFile("../networks/cgg-500.txt")
 	disease := sim.Disease{DaysInfectious: 4, TransProb: 1}
-	behavior := sim.NewSimplePressureBehavior(net, rng, 2, .25)
+	behavior := sim.StaticBehavior{}
 	sir0 := sim.MakeSir0(net.N(), 1, rng)
 	// run a simulation
 	result := sim.Simulate(net.M(), sir0, disease, behavior, 300, rng)

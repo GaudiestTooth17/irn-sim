@@ -92,3 +92,13 @@ func (b SimplePressureBehavior) UpdateConnections(D *mat.Dense, M *mat.Dense, ti
 	}
 	return R
 }
+
+type StaticBehavior struct{}
+
+func (b StaticBehavior) Name() string {
+	return "StaticBehavior"
+}
+
+func (b StaticBehavior) UpdateConnections(D *mat.Dense, M *mat.Dense, timeStep int, sir SIR) *mat.Dense {
+	return M
+}
