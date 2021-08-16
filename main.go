@@ -24,6 +24,7 @@ func main() {
 	// behavior := sim.StaticBehavior{}
 	sir0 := sim.MakeSir0(net.N(), 1, rng)
 	// run a simulation
-	result := sim.Simulate(net.M(), sir0, disease, behavior, 300, rng)
-	fmt.Println(sim.GetSurvivalPercentage(result))
+	// result := sim.Simulate(net.M(), sir0, disease, behavior, 300, rng)
+	// fmt.Println(sim.GetSurvivalPercentage(result))
+	fmt.Println(runSimBatch(net.M(), sir0, disease, behavior, 100, rng, 500))
 }
