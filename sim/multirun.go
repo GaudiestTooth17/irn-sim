@@ -49,21 +49,11 @@ func SimOnManyNetworksForSurvivalRate(nets []*network.AdjacencyList,
 	seed int64,
 	numSimsPerNet int) []float64 {
 
-	// start goroutines
-	// job chan
-	jobs := make(chan int, 4)
-	go func() {
-		for jobID := range nets {
-			jobs <- jobID
-
-		}
-		close(jobs)
-	}()
-	// read values from the job channel to control how many goroutines run at once
-	survivalRateChan := make(chan []float64, 4)
+	survivalRateChan := make(chan []float64)
 	defer close(survivalRateChan)
-	for jobID := range jobs {
-		net := nets[jobID]
+
+	// send data to channel
+	for _, net := range nets {
 		M := net.M()
 		rng := rand.New(rand.NewSource(seed))
 		sir0 := makeSir0(net.N(), 1, rng)

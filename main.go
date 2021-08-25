@@ -31,6 +31,6 @@ func main() {
 	// result := sim.Simulate(net.M(), sir0, disease, behavior, 300, rng)
 	// fmt.Println(sim.GetSurvivalPercentage(result))
 	survivalRates := sim.SimOnManyNetworksForSurvivalRate(nets, makeSIR0, disease,
-		makeBehavior, 150, 0, 100)
+		makeBehavior, 150, 0, 1)
 	fmt.Println(len(survivalRates))
 }
