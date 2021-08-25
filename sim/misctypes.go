@@ -46,6 +46,16 @@ func (sir SIR) NumRemoved() int {
 	return count
 }
 
+func (sir SIR) NumSusceptbile() int {
+	count := 0
+	for _, timeInState := range sir.S {
+		if timeInState > 0 {
+			count++
+		}
+	}
+	return count
+}
+
 func (sir SIR) InfectiousLongerThan(time int) []int {
 	nodesInfectiousForLongTime := make([]int, 0)
 	for node, timeInState := range sir.I {

@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 
 	fio "github.com/GaudiestTooth17/irn-sim/fileio"
+	"github.com/GaudiestTooth17/irn-sim/network"
+	"github.com/GaudiestTooth17/irn-sim/sim"
 )
 
 func main() {
@@ -15,17 +18,19 @@ func main() {
 	networkPath := os.Args[1]
 
 	nets := fio.ReadClass(networkPath)
-	fmt.Printf("Read %d networks.\n", len(nets))
-
-	// // set up the parameters
-	// rng := rand.New(rand.NewSource(0))
-	// net := fio.ReadFile(networkPath)
-	// disease := sim.Disease{DaysInfectious: 4, TransProb: .2}
-	// behavior := sim.NewSimplePressureBehavior(net, rng, 2, .25)
-	// // behavior := sim.StaticBehavior{}
-	// sir0 := sim.MakeSir0(net.N(), 1, rng)
-	// // run a simulation
-	// // result := sim.Simulate(net.M(), sir0, disease, behavior, 300, rng)
-	// // fmt.Println(sim.GetSurvivalPercentage(result))
-	// fmt.Println(runSimBatch(net.M(), sir0, disease, behavior, 100, rng, 500))
+	// set up the parameters
+	disease := sim.Disease{DaysInfectious: 4, TransProb: .2}
+	makeBehavior := func(net *network.AdjacencyList, rng *rand.Rand) sim.Behavior {
+		return sim.NewSimplePressureBehavior(net, rng, 2, .25)
+	}
+	// behavior := sim.StaticBehavior{}
+	makeSIR0 := func(N int, numToInfect int, rng *rand.Rand) sim.SIR {
+		return sim.MakeSir0(N, 1, rng)
+	}
+	// run a simulation
+	// result := sim.Simulate(net.M(), sir0, disease, behavior, 300, rng)
+	// fmt.Println(sim.GetSurvivalPercentage(result))
+	survivalRates := sim.SimOnManyNetworksForSurvivalRate(nets, makeSIR0, disease,
+		makeBehavior, 150, 0, 100)
+	fmt.Println(len(survivalRates))
 }
