@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"path/filepath"
+	"strings"
 
 	fio "github.com/GaudiestTooth17/irn-sim/fileio"
 	"github.com/GaudiestTooth17/irn-sim/network"
@@ -16,6 +18,7 @@ func main() {
 		return
 	}
 	networkPath := os.Args[1]
+	networkName := strings.Split(filepath.Base(networkPath), ".")[0]
 
 	nets := fio.ReadClass(networkPath)
 	// set up the parameters
@@ -31,6 +34,20 @@ func main() {
 	// result := sim.Simulate(net.M(), sir0, disease, behavior, 300, rng)
 	// fmt.Println(sim.GetSurvivalPercentage(result))
 	survivalRates := sim.SimOnManyNetworksForSurvivalRate(nets, makeSIR0, disease,
-		makeBehavior, 150, 0, 1)
-	fmt.Println(len(survivalRates))
+		makeBehavior, 300, 69, 500)
+
+	// save to csv
+	csvLines := [][]string{
+		{networkName},
+		floatSliceToStrSlice(survivalRates),
+	}
+	fio.WriteToCSV(networkName+".csv", csvLines)
+}
+
+func floatSliceToStrSlice(fSlice []float64) []string {
+	strSlice := make([]string, len(fSlice))
+	for i, val := range fSlice {
+		strSlice[i] = fmt.Sprint(val)
+	}
+	return strSlice
 }
